@@ -1,2 +1,7 @@
-# leetcode_go
-leetcode by go
+### Synopsis
+
+leetcode implement by Go
+
+### Directory
+
+* backtracking

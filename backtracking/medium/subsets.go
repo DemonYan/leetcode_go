@@ -1,52 +1,97 @@
 /*
  * @Author: ruoru
  * @Date: 2020-06-10 14:04:50
- * @LastEditors: Demon
- * @LastEditTime: 2020-06-10 23:25:42
+ * @LastEditors: ruoru
+ * @LastEditTime: 2020-06-12 17:38:01
  * @Description: https://leetcode-cn.com/problems/subsets/
  */
 
- package main
+package main
 
- import (
-	 "container/list"
-	 "fmt"
-	 "math"
+import (
+	"fmt"
+	"strconv"
+	"strings"
 )
 
-func backtracking(route string, choices []int, res *list.List) {
+func reverse(s []int) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}
+
+func backtracking(route string, choices []int, cmap map[string]int) {
+	if len(choices) == 0 {
+		cmap[route] = 1
+		return
+	}
+
 	for i := 0; i < len(choices); i++ {
-		backtracking(route + string(choices[i]), choices[i+1:], res)
+		backtracking(route+fmt.Sprint(choices[i])+",", choices[i+1:], cmap)
+		backtracking(route, choices[i+1:], cmap)
 	}
 }
 
 func subsets(nums []int) [][]int {
-	//数组长度为 2^len(nums) 次方个
-	/*
-		这里可以用二进制位来类比，比如 [1,2,3]
-		其实就对应一个三位的二进制 000
-		位数上为1，表示该位数值出现，比如 001 对应的不是 [3]
-		所以总共有 8  种情况
-		这也是进制位运算可以得到结果的一种解法
-	*/
-	if nums == nil || len(nums) <= 0 {
-		return [][]int{};
+	arr := make([][]int, 0)
+	if len(nums) == 0 {
+		return arr
 	}
-
-	numsSize := len(nums)
-	arr := [1][math.Exp2(numsSize)]int{};
-	return arr;
+	cmap := make(map[string]int)
+	backtracking("", nums, cmap)
+	for k, _ := range cmap {
+		if len(k) == 0 {
+			arr = append(arr, make([]int, 0))
+			continue
+		}
+		var tmp = strings.Split(k[0:len(k)-1], ",")
+		var tmpInt = make([]int, 0)
+		for _, v := range tmp {
+			iv, _ := strconv.Atoi(v)
+			tmpInt = append(tmpInt, iv)
+		}
+		arr = append(arr, tmpInt)
+	}
+	return arr
 }
 
-
 func main() {
-	l := list.New()
-	l.PushBack("first")
-	l.PushBack("Second")
-	test(l)
-	for i := l.Front(); i != nil; i = i.Next() {
-		fmt.Println(i.Value)
-	}
-	
-	a := []int
+	// arr := make([][]int, 0, 10)
+	// t := make([]int, 0, 10)
+	// for i := 0; i < 12; i++ {
+	// 	t = append(t, i)
+	// 	fmt.Printf("%p \n", t)
+	// }
+	// fmt.Println(t)
+	// arr = append(arr, t)
+	// fmt.Println(t)
+	// fmt.Println(arr)
+
+	// fmt.Println(strings.Split("abc", ""))
+	// var arr []int
+	// var arr2 = append(arr, 1)
+	// fmt.Println(arr)
+	// fmt.Println(arr2)
+	// fmt.Println(arr)
+	// var arr = []int{1, 2, 3}
+	// var arr2 = arr[0:]
+	// fmt.Printf("%p \n", arr)
+	// fmt.Printf("%p \n", arr2)
+	// copy(arr, arr[0:])
+	// fmt.Printf("%p \n", arr)
+	// // arr2[1] = 3
+	// fmt.Println(arr)
+	// reverse(arr)
+	// fmt.Println(arr)
+	fmt.Println(subsets([]int{1, 2, 3}))
+	fmt.Println(subsets([]int{1, 2, 3, 5}))
+	fmt.Println(subsets([]int{9, 0, 3, 5, 7}))
+
+	// var a = []int{1, 2, 3}
+	// b, _ := json.Marshal(a)
+	// fmt.Println(string(b))
+	// var m = make(map[string]int)
+	// m[string(b)] = 1
+	// fmt.Println(m)
+	// fmt.Println(fmt.Sprint(a))
 }
